@@ -1,9 +1,9 @@
 
-restart -f -nowave
+#restart -f -nowave
 view signals wave
-config wave -signalnamewidth 1
+#config wave -signalnamewidth 1
 set NumericStdNoWarnings 1
-.main clear
+#.main clear
 
 
 

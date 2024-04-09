@@ -1,0 +1,5 @@
+$SIM/I2C_master_tb.vhdl
+$PKG/config_state_package.vhdl
+$PKG/i2c_type_package.vhdl
+$SRC/ADC_Configuration_Flow_Controller.vhdl
+$SRC/I2C_Interface.vhdl

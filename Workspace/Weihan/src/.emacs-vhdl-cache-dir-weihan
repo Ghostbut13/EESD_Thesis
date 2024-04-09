@@ -1,0 +1,43 @@
+;; -*- Emacs-Lisp -*-
+
+;;; .emacs-vhdl-cache-dir-weihan - design hierarchy cache file for Emacs VHDL Mode 3.38.1
+
+;; Directory : "~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/"
+;; Saved     : 2023-12-18 19:43:25 weihan
+
+
+;; version number
+(setq vhdl-cache-version "3.38.1")
+
+;; directory name
+(setq directory "~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/")
+
+;; entity and architecture cache
+(vhdl-aput 'vhdl-entity-alist directory '
+(("adc_configuration_flow_controller" "ADC_Configuration_Flow_Controller" "~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/ADC_Configuration_Flow_Controller.vhdl" 34 (("arch_adc_configuration_flow_controller" "arch_ADC_Configuration_Flow_Controller" "~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/ADC_Configuration_Flow_Controller.vhdl" 59 nil nil)) "arch_adc_configuration_flow_controller" (("ieee" . "std_logic_1164") ("ieee" . "numeric_std") ("work" . "config_state_package"))) ("i2c_interface" "I2C_Interface" "~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/I2C_Interface.vhdl" 33 (("arch_i2c_interface" "arch_I2C_Interface" "~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/I2C_Interface.vhdl" 48 nil nil)) "arch_i2c_interface" (("ieee" . "std_logic_1164") ("ieee" . "numeric_std") ("work" . "i2c_type_package"))))
+)
+
+;; configuration cache
+(vhdl-aput 'vhdl-config-alist directory '
+nil
+)
+
+;; package cache
+(vhdl-aput 'vhdl-package-alist directory '
+nil
+)
+
+;; instantiated entities cache
+(vhdl-aput 'vhdl-ent-inst-alist directory '
+(nil)
+)
+
+;; design units per file cache
+(vhdl-aput 'vhdl-file-alist directory '
+(("~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/I2C_Interface.vhdl" ("i2c_interface") ("arch_i2c_interface") ("i2c_interface") nil nil nil nil nil) ("~/Workplace/masterThesis/EESD_Thesis/Workspace/Weihan/src/ADC_Configuration_Flow_Controller.vhdl" ("adc_configuration_flow_controller") ("arch_adc_configuration_flow_controller") ("adc_configuration_flow_controller") nil nil nil nil nil))
+)
+
+;; shown design units cache
+(vhdl-aput 'vhdl-speedbar-shown-unit-alist directory '
+nil
+)

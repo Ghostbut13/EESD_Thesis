@@ -1,0 +1,16 @@
+sim:
+	cp ./scr/sim.sh sim.sh
+	./sim.sh
+	rm sim.sh
+dump:
+	cp ./scr/wave.sh wave.sh
+	./wave.sh
+	rm wave.sh
+clear:
+	touch sim.sh
+	rm sim.sh
+	touch wave.sh
+	rm wave.sh
+all:
+	make sim
+	make dump
