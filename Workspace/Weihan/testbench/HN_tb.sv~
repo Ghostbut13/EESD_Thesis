@@ -1,0 +1,125 @@
+`timescale 1ns/10ps
+
+
+
+module HN_tb (/*AUTOARG*/) ;
+   
+
+`include "para.vh"
+`include "HN_controller.sv"
+
+   reg  clk, rstn;
+   // test
+   reg   [6:0] rx_opcode;
+   wire  [6:0] tx_opcode;
+   wire  [6:0] trgID;
+   // CHI in   
+   reg [127:0] RX_REQFLIT_128, RX_RSPFLIT_128, RX_DATFLIT_128; //128 pkg
+   reg 	       RX_REQFLITPEND, RX_REQFLITV;                    
+   reg 	       RX_RSPFLITPEND, RX_RSPFLITV;
+   reg 	       RX_DATFLITPEND, RX_DATFLITV;
+   wire        RX_REQLCRDV, RX_RSPLCRDV, RX_DATLCRDV;          //L-credit
+   // CHI out
+   wire [127:0] TX_REQFLIT_128, TX_RSPFLIT_128, TX_DATFLIT_128;
+   wire 	TX_REQFLITPEND, TX_REQFLITV;   
+   wire 	TX_RSPFLITPEND, TX_RSPFLITV;
+   wire 	TX_DATFLITPEND, TX_DATFLITV;
+   reg 		TX_REQLCRDV, TX_RSPLCRDV, TX_DATLCRDV;         //L-credit
+
+
+   HN_controller HN (
+		     // Outputs
+		     .tx_opcode(tx_opcode),
+		     .trgID(trgID),
+		     .RX_REQLCRDV(RX_REQLCRDV),
+		     .RX_RSPLCRDV(RX_RSPLCRDV),
+		     .RX_DATLCRDV(RX_DATLCRDV),
+		     .TX_REQFLIT_128(TX_REQFLIT_128),
+		     .TX_RSPFLIT_128(TX_RSPFLIT_128),
+		     .TX_DATFLIT_128(TX_DATFLIT_128),
+		     .TX_REQFLITPEND(TX_REQFLITPEND),
+		     .TX_REQFLITV(TX_REQFLITV),
+		     .TX_RSPFLITPEND(TX_RSPFLITPEND),
+		     .TX_RSPFLITV(TX_RSPFLITV),
+		     .TX_DATFLITPEND(TX_DATFLITPEND),
+		     .TX_DATFLITV(TX_DATFLITV),
+		     // Inputs
+		     .clk(clk),
+		     .rstn(rstn),
+		     .rx_opcode(rx_opcode),
+		     .RX_REQFLIT_128(RX_REQFLIT_128),
+		     .RX_RSPFLIT_128(RX_RSPFLIT_128),
+		     .RX_DATFLIT_128(RX_DATFLIT_128),
+		     .RX_REQFLITPEND(RX_REQFLITPEND),
+		     .RX_REQFLITV(RX_REQFLITV),
+		     .RX_RSPFLITPEND(RX_RSPFLITPEND),
+		     .RX_RSPFLITV(RX_RSPFLITV),
+		     .RX_DATFLITPEND(RX_DATFLITPEND),
+		     .RX_DATFLITV(RX_DATFLITV),
+		     .TX_REQLCRDV(TX_REQLCRDV),
+		     .TX_RSPLCRDV(TX_RSPLCRDV),
+		     .TX_DATLCRDV(TX_DATLCRDV)
+		     );
+
+   
+   
+   
+   initial begin
+      clk = 1'b0;
+      forever begin
+	 #CLK_2_5 clk = ~clk;
+      end
+   end
+
+   initial begin
+      rstn = 1'b1;
+      #2 rstn = 1'b0;
+      #4 rstn = 1'b1;
+   end
+
+   /*****************************************/
+   initial begin
+      #1 rx_opcode = rx_BLANK;
+      #200 rx_opcode = ReadShared;
+      #50 rx_opcode = rx_BLANK;
+   end 
+
+
+/* -----\/----- EXCLUDED -----\/-----
+   initial begin
+      #600 rx_opcode = SnpResp_I;
+      #50 rx_opcode = rx_BLANK;
+      #100 rx_opcode = SnpResp_I;
+      #50 rx_opcode = rx_BLANK;
+      #100 rx_opcode = SnpResp_I;
+      #50 rx_opcode = rx_BLANK;
+   end 
+ -----/\----- EXCLUDED -----/\----- */
+   
+   initial begin
+      #1 RX_RSPFLITPEND = 1;
+
+      #600 RX_RSPFLITPEND = 0;
+      #50 RX_RSPFLITPEND = 1;
+      #100 RX_RSPFLITPEND = 0;
+      #50 RX_RSPFLITPEND = 1;
+      #100 RX_RSPFLITPEND = 0;
+      #50 RX_RSPFLITPEND = 1;
+   end
+
+
+   initial begin
+      #1500 rx_opcode = CompData_I;
+
+      #1500 rx_opcode = CompAck;
+      
+   end
+
+  
+
+   initial begin
+      #2000000 $stop;
+      
+   end
+   
+endmodule // HN_tb

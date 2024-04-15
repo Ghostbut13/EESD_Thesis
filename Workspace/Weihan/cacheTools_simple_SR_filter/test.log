@@ -1,0 +1,6 @@
+g++ -fPIC -g -c -o MultiCacheSim_PinDriver.o MultiCacheSim_PinDriver.cpp \
+-I/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/source//include/pin/ \
+-I/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/xed-intel64/include/xed -I/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/crt/include/ -I/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/crt/include/kernel/uapi/ \
+-I/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/crt/include/kernel/uapi/ \
+-I/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/components/include/ \
+-I/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/source//include/pin/gen/

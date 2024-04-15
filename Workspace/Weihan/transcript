@@ -1,9 +1,0 @@
-# ./result/dump/I2C_master_tb.wlf opened as dataset "i2c"
-# do ./scr/i2c.do
-# .main_pane.objects.interior.cs.body.tree .main_pane.wave.interior.cs.body.pw.wf
-# 1
-# ** Error: No Design Loaded!
-# Error in macro ././scr/i2c.do line 34
-# No Design Loaded!
-#     while executing
-# "run 2400000 ns"
