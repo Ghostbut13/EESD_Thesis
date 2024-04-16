@@ -52,18 +52,25 @@ void MultiCacheSim::createNewCache(){
     #ifndef PIN
     pthread_mutex_lock(&allCachesLock);
     #else
-    PIN_GetLock(&allCachesLock,1); 
+    PIN_GetLock(&allCachesLock,1);
+    fprintf(stdout,"lock\n");
     #endif
 
     SMPCache * newcache;
+
+    fprintf(stdout,"newcache\n");
     newcache = this->cacheFactory(num_caches++, &allCaches, cache_size, cache_assoc, cache_bsize, 1, "LRU", false);
+
+
     allCaches.push_back(newcache);
+    fprintf(stdout,"pushhh\n");
 
 
     #ifndef PIN
     pthread_mutex_unlock(&allCachesLock);
     #else
-    PIN_ReleaseLock(&allCachesLock); 
+    PIN_ReleaseLock(&allCachesLock);
+    fprintf(stdout,"unlock\n");
     #endif
 }
 

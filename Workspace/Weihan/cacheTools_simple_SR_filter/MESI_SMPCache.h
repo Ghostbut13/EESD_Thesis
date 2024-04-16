@@ -59,7 +59,7 @@ public:
 
   virtual char *Identify();
  
-  //Dump the stats for this cache to outFile
+  ////Dump the stats for this cache to outFile
   //void dumpStatsToFile(FILE* outFile);
 
   //Destructor

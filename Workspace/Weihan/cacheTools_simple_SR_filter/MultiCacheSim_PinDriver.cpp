@@ -29,34 +29,34 @@ KNOB<bool> KnobStopOnError(KNOB_MODE_WRITEONCE, "pintool",
 			   "stopOnProtoBug", "false", "Stop the Simulation when a deviation is detected between the test protocol and the reference");//default cache is verbose 
 
 KNOB<bool> KnobPrintOnError(KNOB_MODE_WRITEONCE, "pintool",
-			   "printOnProtoBug", "false", "Print a debugging message when a deviation is detected between the test protocol and the reference");//default cache is verbose 
+			    "printOnProtoBug", "false", "Print a debugging message when a deviation is detected between the test protocol and the reference");//default cache is verbose 
 
 KNOB<bool> KnobUseReference(KNOB_MODE_WRITEONCE, "pintool",
-			   "useref", "false", "Use a reference protocol to compare running protocol states with (default = false)");//default cache is verbose 
+			    "useref", "false", "Use a reference protocol to compare running protocol states with (default = false)");//default cache is verbose 
 
 KNOB<bool> KnobConcise(KNOB_MODE_WRITEONCE, "pintool",
-			   "concise", "true", "Print output concisely");//default cache is verbose 
+		       "concise", "true", "Print output concisely");//default cache is verbose 
 
 KNOB<unsigned int> KnobCacheSize(KNOB_MODE_WRITEONCE, "pintool",
-			   "csize", "65536", "Cache Size");//default cache is 64KB
+				 "csize", "65536", "Cache Size");//default cache is 64KB
 
 KNOB<unsigned int> KnobBlockSize(KNOB_MODE_WRITEONCE, "pintool",
-			   "bsize", "64", "Block Size");//default block is 64B
+				 "bsize", "64", "Block Size");//default block is 64B
 
 KNOB<unsigned int> KnobAssoc(KNOB_MODE_WRITEONCE, "pintool",
-			   "assoc", "2", "Associativity");//default associativity is 2-way
+			     "assoc", "2", "Associativity");//default associativity is 2-way
 
 KNOB<unsigned int> KnobNumCaches(KNOB_MODE_WRITEONCE, "pintool",
-			   "numcaches", "1", "Number of Caches to Simulate");
+				 "numcaches", "1", "Number of Caches to Simulate");
 
 KNOB<string> KnobProtocol(KNOB_MODE_WRITEONCE, "pintool",
-			   "protos", "obj-intel64/MSI_SMPCache.so", "Cache Coherence Protocol Modules To Simulate");
+			  "protos", "obj-intel64/MSI_SMPCache.so", "Cache Coherence Protocol Modules To Simulate");
 
 KNOB<string> KnobReference(KNOB_MODE_WRITEONCE, "pintool",
 			   "reference", "obj-intel64/MESI_SMPCache.so", "Reference Protocol that is compared to test Protocols for Correctness");
 
 
-#define MAX_NTHREADS 64
+#define MAX_NTHREADS 4
 unsigned long instrumentationStatus[MAX_NTHREADS];
 
 enum MemOpType { MemRead = 0, MemWrite = 1 };
@@ -65,10 +65,10 @@ enum MemOpType { MemRead = 0, MemWrite = 1 };
 //print out help info
 INT32 usage()
 {
-    cerr << "MultiCacheSim -- A Multiprocessor cache simulator with a pin frontend";
-    cerr << KNOB_BASE::StringKnobSummary();
-    cerr << endl;
-    return -1;
+  cerr << "MultiCacheSim -- A Multiprocessor cache simulator with a pin frontend";
+  cerr << KNOB_BASE::StringKnobSummary();
+  cerr << endl;
+  return -1;
 }
 
 
@@ -123,13 +123,13 @@ void Read(THREADID tid, ADDRINT addr, ADDRINT inst){
     if(useRef && (stopOnError || printOnError)){
       if( ReferenceProtocol->getStateAsInt(tid,addr) !=
           (*i)->getStateAsInt(tid,addr)
-        ){
+	  ){
         if(printOnError){
           fprintf(stderr,"[MCS-Read] State of Protocol %s did not match the reference\nShould have been %d but it was %d\n",
                   (*i)->Identify(),
                   ReferenceProtocol->getStateAsInt(tid,addr),
                   (*i)->getStateAsInt(tid,addr));
-          }
+	}
         if(stopOnError){
           exit(1);
         }
@@ -155,7 +155,7 @@ void Write(THREADID tid, ADDRINT addr, ADDRINT inst){
 
       if( ReferenceProtocol->getStateAsInt(tid,addr) !=
           (*i)->getStateAsInt(tid,addr)
-        ){
+	  ){
         if(printOnError){
           fprintf(stderr,"[MCS-Write] State of Protocol %s did not match the reference\nShould have been %d but it was %d\n",
                   (*i)->Identify(),
@@ -177,21 +177,21 @@ VOID instrumentTrace(TRACE trace, VOID *v)
   for (BBL bbl = TRACE_BblHead(trace); BBL_Valid(bbl); bbl = BBL_Next(bbl)) {
     for (INS ins = BBL_InsHead(bbl); INS_Valid(ins); ins = INS_Next(ins)) {  
       if(INS_IsMemoryRead(ins)) {
-	  INS_InsertCall(ins, 
-			 IPOINT_BEFORE, 
-			 (AFUNPTR)Read, 
-			 IARG_THREAD_ID,
-			 IARG_MEMORYREAD_EA,
-			 IARG_INST_PTR,
-			 IARG_END);
+	INS_InsertCall(ins, 
+		       IPOINT_BEFORE, 
+		       (AFUNPTR)Read, 
+		       IARG_THREAD_ID,
+		       IARG_MEMORYREAD_EA,
+		       IARG_INST_PTR,
+		       IARG_END);
       } else if(INS_IsMemoryWrite(ins)) {
-	  INS_InsertCall(ins, 
-			 IPOINT_BEFORE, 
-			 (AFUNPTR)Write, 
-			 IARG_THREAD_ID,//thread id
-			 IARG_MEMORYWRITE_EA,//address being accessed
-			 IARG_INST_PTR,//instruction address of write
-			 IARG_END);
+	INS_InsertCall(ins, 
+		       IPOINT_BEFORE, 
+		       (AFUNPTR)Write, 
+		       IARG_THREAD_ID,//thread id
+		       IARG_MEMORYWRITE_EA,//address being accessed
+		       IARG_INST_PTR,//instruction address of write
+		       IARG_END);
       }
     }
   }
@@ -235,6 +235,10 @@ BOOL termHandler(THREADID threadid,INT32 sig,CONTEXT *ctx,BOOL hasHndlr,const EX
 
 int main(int argc, char *argv[])
 {
+
+  cerr << "======================start=============" << endl;
+
+  
   PIN_InitSymbols();
   if( PIN_Init(argc,argv) ) {
     return usage();
@@ -255,16 +259,20 @@ int main(int argc, char *argv[])
   char *ct = strtok((char *)pstr,",");
   while(ct != NULL){
 
+   
     fprintf(stderr,"Opening protocol \"%s\"\n",ct);
+    
     void *chand = dlopen( ct, RTLD_LAZY | RTLD_LOCAL );
     if( chand == NULL ){
       fprintf(stderr,"Couldn't Load %s\n", argv[1]);
       fprintf(stderr,"dlerror: %s\n", dlerror());
       exit(1);
     }
-  
+    cerr << "================+protocol over++++++++++============" << endl;
+   
     CacheFactory cfac = (CacheFactory)dlsym(chand, "Create");
 
+   
     if( chand == NULL ){
 
       fprintf(stderr,"Couldn't get the Create function\n");
@@ -273,18 +281,30 @@ int main(int argc, char *argv[])
 
     }
 
-    MultiCacheSim *c = new MultiCacheSim(stdout, csize, assoc, bsize, cfac);
+    cerr << "=================CacheFactory over==================" << endl;
 
-    for(unsigned int i = 0; i < num; i++){
-      c->createNewCache();
-    } 
+     
+    MultiCacheSim *c = new MultiCacheSim(stdout, 32, 1, 1, cfac);
 
+    cerr << "=================dqadwd==================" << endl;
+    //for(unsigned int i = 0; i < num; i++){
+    //c->createNewCache();
+    c->createNewCache();//CPU 1
+
+      //} 
+ cerr << "=================dqadwd==================" << endl;
+
+    
     Caches.push_back(c);
 
     ct = strtok(NULL,","); 
 
   }
 
+
+  cerr << "=================sim over==================" << endl;
+
+  
   useRef = KnobUseReference.Value();
   if(useRef){
     void *chand = dlopen( KnobReference.Value().c_str(), RTLD_LAZY | RTLD_LOCAL );
@@ -312,7 +332,10 @@ int main(int argc, char *argv[])
 
     fprintf(stderr,"Using Reference Implementation %s\n",KnobReference.Value().c_str());
 
-  }
+  }// we dont have ref
+
+
+  
 
   stopOnError = KnobStopOnError.Value();
   printOnError = KnobPrintOnError.Value();

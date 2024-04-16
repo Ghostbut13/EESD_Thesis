@@ -34,7 +34,7 @@ int main(int argc, char** argv){
 
   pthread_t tasks[NUM_CACHES];   //create thread
 
-  char *ct = strtok(argv[1],",");  // now the argv[1] is msi.so
+  char *ct = strtok(argv[1],",");  // now the argv[1] is msi.so -- protocol
 
  
   while(ct != NULL){

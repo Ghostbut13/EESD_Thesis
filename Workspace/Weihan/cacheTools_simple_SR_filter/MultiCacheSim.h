@@ -25,9 +25,10 @@ public:
   std::vector<SMPCache * > allCaches;
 
   //The lock that protects the vector so it isn't corrupted by concurrent updates
-  #ifndef PIN
+
+#ifndef PIN
   pthread_mutex_t allCachesLock;
-  #else
+#else
   PIN_LOCK allCachesLock;
   #endif
   //Cache Parameters

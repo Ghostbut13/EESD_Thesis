@@ -64,8 +64,8 @@ public:
 
   virtual char *Identify();
  
-  //Dump the stats for this cache to outFile
-  //virtual void dumpStatsToFile(FILE* outFile);
+  ////Dump the stats for this cache to outFile
+  ///virtual void dumpStatsToFile(FILE* outFile);
 
   //Destructor
   ~MSI_SMPCache();
