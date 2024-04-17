@@ -13,4 +13,4 @@
 6. if ./runMESI_pin.sh works well, go to the ocation of pintools,and run :        
    ./pin -mt -t /PATH_OF_THE_obj-intel64/mcs.so -protos /PATH_OF_THE_obj-intel64/MESI_SMPCache.so -csize 32768 -bsize 64 -assoc 2 -numcaches 2  -- /bin/ls
    
-7. it should dump the result, but I get segment error sadly (4.15)
+7. it should dump the result, but I get segment error (4.15). gdb tells me the error happened at MultiCacheSim.cpp:64 - newcache = this->cacheFatory(...)....
