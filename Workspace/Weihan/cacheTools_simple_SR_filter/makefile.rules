@@ -4,7 +4,7 @@
 # non-default build rules and test recipes.
 #
 ##############################################################
-
+#DEBUG := 1
 
 ##############################################################
 #
@@ -71,6 +71,7 @@ LIB_ROOTS :=
 #
 ##############################################################
 
+
 SRCS := SMPCache.cpp MultiCacheSim.cpp CacheCore.cpp Snippets.cpp nanassert.cpp MultiCacheSim_PinDriver.cpp
 FACSRCS := MSI_SMPCache.cpp MESI_SMPCache.cpp
 
@@ -81,50 +82,52 @@ FACOBJS := $(FACSRCS:%.cpp=%.so)
 # See makefile.default.rules for the default build rules.
 
 
-# header about pintool
-
-
+#####Tool_flags already exists. apppeding the DPIN behind
+##################################################
 TOOL_CXXFLAGS += -DPIN 
+TOOL_CXXFLAGS_NOOPT += -DPIN 
+
+TOOL_LDFLAGS_NOOPT+= -ldl
+#######################################################
 
 $(OBJDIR)SMPCache$(OBJ_SUFFIX) : SMPCache.cpp
-	$(CXX) $(TOOL_CXXFLAGS) -g $(COMP_OBJ)$@ $< 
+	$(CXX) $(TOOL_CXXFLAGS_NOOPT) -g $(COMP_OBJ)$@ $< 
 
 $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) : MultiCacheSim.cpp
-	$(CXX) $(TOOL_CXXFLAGS) -g  $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS_NOOPT) -g  $(COMP_OBJ)$@ $<
 
 $(OBJDIR)CacheCore$(OBJ_SUFFIX) : CacheCore.cpp
-	$(CXX) $(TOOL_CXXFLAGS) -g  $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS_NOOPT) -g  $(COMP_OBJ)$@ $<
 
 $(OBJDIR)Snippets$(OBJ_SUFFIX) : Snippets.cpp
-	$(CXX) $(TOOL_CXXFLAGS) -g  $(COMP_OBJ)$@ $<
+	$(CXX) $(TOOL_CXXFLAGS_NOOPT) -g  $(COMP_OBJ)$@ $<
 
 $(OBJDIR)nanassert$(OBJ_SUFFIX) : nanassert.cpp
-	$(CXX) -Wno-deprecated  -g $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+	$(CXX) -Wno-deprecated  -g $(TOOL_CXXFLAGS_NOOPT) $(COMP_OBJ)$@ $<
 
 $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX) : MultiCacheSim_PinDriver.cpp
-	$(CXX) $(TOOL_CXXFLAGS)  -g $(COMP_OBJ)$@ $< 
+	$(CXX) $(TOOL_CXXFLAGS_NOOPT) -g $(COMP_OBJ)$@ $< 
 
 
 
 ##################################### no filter in MESI
 $(OBJDIR)MESI_SMPCache$(OBJ_SUFFIX) : MESI_SMPCache.cpp
 	$(CXX) $(TOOL_CXXFLAGS_NOOPT)  -g $(COMP_OBJ)$@ $< 
+#	$(CXX) $(TOOL_CXXFLAGS)  -g $(COMP_OBJ)$@ $< 
 
 
-$(OBJDIR)MESI_SMPCache$(PINTOOL_SUFFIX) : $(OBJDIR)SMPCache$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)MESI_SMPCache$(OBJ_SUFFIX)
-	$(LINKER) $(TOOL_LDFLAGS_NOOPT) -shared $(OBJDIR)SMPCache$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(LINK_EXE)$@ $(TOOL_LPATHS) $(TOOL_LIBS)
+$(OBJDIR)MESI_SMPCache$(PINTOOL_SUFFIX) : $(OBJDIR)MESI_SMPCache$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX)
+	$(LINKER) $(TOOL_LDFLAGS_NOOPT) -fPIC -shared  $(OBJDIR)MESI_SMPCache$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(LINK_EXE)$@ $(TOOL_LPATHS) $(TOOL_LIBS) -rdynamic
 
 
-################################### some small warnings in filter design in MSI will triger the error
-$(OBJDIR)MSI_SMPCache$(OBJ_SUFFIX) : MSI_SMPCache.cpp
-	$(CXX) $(TOOL_CXXFLAGS_NOOPT)  -g $(COMP_OBJ)$@ $< 
 
-$(OBJDIR)MSI_SMPCache$(PINTOOL_SUFFIX) : $(OBJDIR)SMPCache$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)MSI_SMPCache$(OBJ_SUFFIX)
-	$(LINKER) $(TOOL_LDFLAGS_NOOPT) -shared $(OBJDIR)SMPCache$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(LINK_EXE)$@ $(TOOL_LPATHS) $(TOOL_LIBS)
+################################# main simulation : mcs 
+$(OBJDIR)mcs$(PINTOOL_SUFFIX) : $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX)  $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)
+	$(LINKER) $(TOOL_LDFLAGS_NOOPT)  -fPIC -shared $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX)  $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(LINK_EXE) $@ $(TOOL_LPATHS) $(TOOL_LIBS) -rdynamic
 
-################### main simulation : mcs 
-$(OBJDIR)mcs$(PINTOOL_SUFFIX) : $(OBJDIR)SMPCache$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX)
-	$(LINKER) $(TOOL_LDFLAGS) -shared $(OBJDIR)SMPCache$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX) -o $@ $(TOOL_LPATHS) $(TOOL_LIBS)
+
+
+
 #-o $(OBJDIR)mcs$(PINTOOL_SUFFIX) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 
