@@ -203,3 +203,10 @@ extern "C" SMPCache *Create(int num, std::vector<SMPCache*> *cvec, int csize, in
   return new MESI_SMPCache(num,cvec,csize,casso,bs,addrble,repl,skw);
 
 }
+
+
+
+extern "C" int weihan(){
+  fprintf(stdout,"aaaaaa");
+  return 137;
+}

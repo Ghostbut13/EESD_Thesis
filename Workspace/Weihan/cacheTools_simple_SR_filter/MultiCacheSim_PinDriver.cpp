@@ -6,7 +6,9 @@
 #include <fstream>
 #include <string>
 #include <string.h>
-#include <dlfcn.h>
+#include "/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/crt/include/dlfcn.h"
+//#include <dlfcn.h>
+
 
 #include "MultiCacheSim.h"
 
@@ -236,15 +238,19 @@ BOOL termHandler(THREADID threadid,INT32 sig,CONTEXT *ctx,BOOL hasHndlr,const EX
 int main(int argc, char *argv[])
 {
 
-  cerr << "======================start=============" << endl;
-
-  
   PIN_InitSymbols();
   if( PIN_Init(argc,argv) ) {
     return usage();
   }
 
   PIN_InitLock(&globalLock);
+
+
+  
+
+  cerr << "======================start=============" << endl;
+
+  
   
   for(int i = 0; i < MAX_NTHREADS; i++){
     instrumentationStatus[i] = true;
@@ -256,22 +262,31 @@ int main(int argc, char *argv[])
   unsigned long num = KnobNumCaches.Value();
 
   const char *pstr = KnobProtocol.Value().c_str();
-  char *ct = strtok((char *)pstr,",");
+  char *ct = strtok((char *)pstr,","); // ct is the location of the .so
+
+
+  
   while(ct != NULL){
 
    
     fprintf(stderr,"Opening protocol \"%s\"\n",ct);
     
-    void *chand = dlopen( ct, RTLD_LAZY | RTLD_LOCAL );
+    void *chand = dlopen( ct, RTLD_LAZY | RTLD_GLOBAL );  //open the .so, chand is jubing
+    
     if( chand == NULL ){
       fprintf(stderr,"Couldn't Load %s\n", argv[1]);
       fprintf(stderr,"dlerror: %s\n", dlerror());
       exit(1);
     }
-    cerr << "================+protocol over++++++++++============" << endl;
-   
-    CacheFactory cfac = (CacheFactory)dlsym(chand, "Create");
 
+
+    
+    cerr << "================+protocol over++++++++++============" << endl;
+
+    int (*fptr)(void) ;
+    *(void **)(&fptr) = dlsym(chand, "weihan");
+      
+    CacheFactory cfac = (CacheFactory)dlsym(chand, "Create");
    
     if( chand == NULL ){
 
@@ -283,23 +298,24 @@ int main(int argc, char *argv[])
 
     cerr << "=================CacheFactory over==================" << endl;
 
-     
-    MultiCacheSim *c = new MultiCacheSim(stdout, 32, 1, 1, cfac);
+    MultiCacheSim *c = new MultiCacheSim(stdout, csize, assoc, bsize, cfac);
 
     cerr << "=================dqadwd==================" << endl;
     //for(unsigned int i = 0; i < num; i++){
     //c->createNewCache();
+    //}
+
     c->createNewCache();//CPU 1
 
-      //} 
- cerr << "=================dqadwd==================" << endl;
+     
+    cerr << "=================fyghdw]]=d==================" << endl;
 
     
     Caches.push_back(c);
 
     ct = strtok(NULL,","); 
 
-  }
+  }//while loop
 
 
   cerr << "=================sim over==================" << endl;
@@ -333,7 +349,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,"Using Reference Implementation %s\n",KnobReference.Value().c_str());
 
   }// we dont have ref
-
+  
 
   
 

@@ -53,17 +53,23 @@ void MultiCacheSim::createNewCache(){
     pthread_mutex_lock(&allCachesLock);
     #else
     PIN_GetLock(&allCachesLock,1);
-    // ------------------debug flag1
+    // ------------------debug flag1-----------------
     fprintf(stdout,"lock\n");
     #endif
 
-    SMPCache * newcache;
-    // ------------------debug flag2
+    SMPCache * newcache ;
+    // ------------------debug flag2------------------
 
     fprintf(stdout,"newcache\n");
-    newcache = this->cacheFactory(num_caches++, &allCaches, cache_size, cache_assoc, cache_bsize, 1, "LRU", false);
+    
+    newcache = this->cacheFactory(num_caches, &allCaches, cache_size, cache_assoc, cache_bsize, 1, "LRU", false);
+    //newcache = (SMPCache * )
 
-    // ------------------debug flag3
+    //newcache = Create(num_caches, &allCaches, cache_size, cache_assoc, cache_bsize, 1, "LRU", false);
+    
+    num_caches++;
+
+    // ------------------debug flag3------------------
 
     allCaches.push_back(newcache);
     fprintf(stdout,"pushhh\n");
