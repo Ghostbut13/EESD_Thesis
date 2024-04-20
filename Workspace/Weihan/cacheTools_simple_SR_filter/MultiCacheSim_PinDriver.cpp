@@ -6,17 +6,18 @@
 #include <fstream>
 #include <string>
 #include <string.h>
-#include "/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/crt/include/dlfcn.h"
-//#include <dlfcn.h>
+//#include "/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/crt/include/dlfcn.h"
+#include <dlfcn.h>
 
 
 #include "MultiCacheSim.h"
 
 
+
 using std::cerr;
 using std::string;
 using std::endl;
-
+using std::cout;
 
 
 std::vector<MultiCacheSim *> Caches;
@@ -58,7 +59,7 @@ KNOB<string> KnobReference(KNOB_MODE_WRITEONCE, "pintool",
 			   "reference", "obj-intel64/MESI_SMPCache.so", "Reference Protocol that is compared to test Protocols for Correctness");
 
 
-#define MAX_NTHREADS 4
+#define MAX_NTHREADS 64
 unsigned long instrumentationStatus[MAX_NTHREADS];
 
 enum MemOpType { MemRead = 0, MemWrite = 1 };
@@ -108,6 +109,9 @@ VOID instrumentRoutine(RTN rtn, VOID *v){
 
 }
 
+
+
+
 VOID instrumentImage(IMG img, VOID *v)
 {
 
@@ -120,7 +124,7 @@ void Read(THREADID tid, ADDRINT addr, ADDRINT inst){
   }
   std::vector<MultiCacheSim *>::iterator i,e;
   for(i = Caches.begin(), e = Caches.end(); i != e; i++){
-    (*i)->readLine(tid,inst,addr);
+    (*i)->readLine(tid,inst,addr); //key 
     
     if(useRef && (stopOnError || printOnError)){
       if( ReferenceProtocol->getStateAsInt(tid,addr) !=
@@ -216,6 +220,7 @@ VOID dumpInfo(){
 
 VOID Fini(INT32 code, VOID *v)
 {
+  //cout << "dadadadadaf" << endl;
   
   std::vector<MultiCacheSim *>::iterator i,e;
   for(i = Caches.begin(), e = Caches.end(); i != e; i++){
@@ -243,13 +248,14 @@ int main(int argc, char *argv[])
     return usage();
   }
 
-  PIN_InitLock(&globalLock);
-
-
   
+  PIN_InitLock(&globalLock);  
 
-  cerr << "======================start=============" << endl;
+  //FILE *fp =NULL;
 
+  //fp=fopen("hello.log","w+");
+  
+  cout << "======================start===================" << endl;
   
   
   for(int i = 0; i < MAX_NTHREADS; i++){
@@ -265,14 +271,9 @@ int main(int argc, char *argv[])
   char *ct = strtok((char *)pstr,","); // ct is the location of the .so
 
 
-  
   while(ct != NULL){
-
-   
     fprintf(stderr,"Opening protocol \"%s\"\n",ct);
-    
     void *chand = dlopen( ct, RTLD_LAZY | RTLD_GLOBAL );  //open the .so, chand is jubing
-    
     if( chand == NULL ){
       fprintf(stderr,"Couldn't Load %s\n", argv[1]);
       fprintf(stderr,"dlerror: %s\n", dlerror());
@@ -280,45 +281,26 @@ int main(int argc, char *argv[])
     }
 
 
-    
-    cerr << "================+protocol over++++++++++============" << endl;
-
-    int (*fptr)(void) ;
-    *(void **)(&fptr) = dlsym(chand, "weihan");
-      
     CacheFactory cfac = (CacheFactory)dlsym(chand, "Create");
    
-    if( chand == NULL ){
-
+    if( cfac == NULL ){
       fprintf(stderr,"Couldn't get the Create function\n");
       fprintf(stderr,"dlerror: %s\n", dlerror());
       exit(1);
-
     }
 
-    cerr << "=================CacheFactory over==================" << endl;
-
+    /////MultiCacheSim *c = new MultiCacheSim(stdout, csize, assoc, bsize, cfac);
     MultiCacheSim *c = new MultiCacheSim(stdout, csize, assoc, bsize, cfac);
 
-    cerr << "=================dqadwd==================" << endl;
-    //for(unsigned int i = 0; i < num; i++){
-    //c->createNewCache();
-    //}
-
-    c->createNewCache();//CPU 1
-
-     
-    cerr << "=================fyghdw]]=d==================" << endl;
-
-    
+    for(unsigned int i = 0; i < num; i++){
+      c->createNewCache();
+    }
     Caches.push_back(c);
-
     ct = strtok(NULL,","); 
 
   }//while loop
 
 
-  cerr << "=================sim over==================" << endl;
 
   
   useRef = KnobUseReference.Value();
@@ -368,7 +350,8 @@ int main(int argc, char *argv[])
   PIN_AddFiniFunction(Fini, 0);
     
   fprintf(stderr,"Using Protocol %s\n",KnobReference.Value().c_str());
- 
+
+  //fclose(fp);
   PIN_StartProgram();
   
   return 0;

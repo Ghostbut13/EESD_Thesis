@@ -198,15 +198,11 @@ char *MESI_SMPCache::Identify(){
 }
 
 
-extern "C" SMPCache *Create(int num, std::vector<SMPCache*> *cvec, int csize, int casso, int bs, int addrble, const char *repl, bool skw){
 
+extern "C" SMPCache*  Create(int num, std::vector<SMPCache*> *cvec, int csize, int casso, int bs, int addrble, const char *repl, bool skw){
+  
   return new MESI_SMPCache(num,cvec,csize,casso,bs,addrble,repl,skw);
 
 }
 
 
-
-extern "C" int weihan(){
-  fprintf(stdout,"aaaaaa");
-  return 137;
-}

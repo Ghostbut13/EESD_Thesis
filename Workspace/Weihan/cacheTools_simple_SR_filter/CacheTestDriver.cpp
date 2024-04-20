@@ -45,16 +45,8 @@ int main(int argc, char** argv){
       exit(1);
     }
 
-    int (*fptr)(void) ;
-    *(void **)(&fptr) = dlsym(chand, "weihan");
-    *(fptr);
-    
-    //a = dlsym(chand, "weihan");
-    //CacheFactory cfac = (CacheFactory)dlsym(chand, "Cccccccreate"); //incorrect
     CacheFactory cfac = (CacheFactory)dlsym(chand, "Create"); // coreect
-    
-  
-    if( chand == NULL ){
+    if( cfac == NULL ){
       printf("Couldn't get the Create function\n");
       printf("dlerror: %s\n", dlerror());
       exit(1);

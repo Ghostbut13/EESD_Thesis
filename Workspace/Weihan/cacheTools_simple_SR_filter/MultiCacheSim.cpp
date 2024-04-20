@@ -25,11 +25,12 @@ SMPCache *MultiCacheSim::findCacheByCPUId(unsigned int CPUid){
     for(; cacheIter != cacheEndIter; cacheIter++){
       if((*cacheIter)->CPUId == CPUid){
         return (*cacheIter);
+	
       }
     }
     return NULL;
 } 
-  
+
 void MultiCacheSim::dumpStatsForAllCaches(bool concise){
    
     std::vector<SMPCache *>::iterator cacheIter = allCaches.begin();
@@ -39,7 +40,7 @@ void MultiCacheSim::dumpStatsForAllCaches(bool concise){
         (*cacheIter)->dumpStatsToFile(CacheStats);
       }else{
 
-    fprintf(CacheStats,"CPUId, numReadHits, numReadMisses, numReadOnInvalidMisses, numReadRequestsSent, numReadMissesServicedByOthers, numReadMissesServicedByShared, numReadMissesServicedByModified, numWriteHits, numWriteMisses, numWriteOnSharedMisses, numWriteOnInvalidMisses, numInvalidatesSent,weihan'shere\n");
+	fprintf(CacheStats,"CPUId, numReadHits, numReadMisses, numReadOnInvalidMisses, numReadRequestsSent, numReadMissesServicedByOthers, numReadMissesServicedByShared, numReadMissesServicedByModified, numWriteHits, numWriteMisses, numWriteOnSharedMisses, numWriteOnInvalidMisses, numInvalidatesSent,weihan'shere\n");
 
     // conciseDumpStatsToFile : most impotant. in SMPCache
         (*cacheIter)->conciseDumpStatsToFile(CacheStats);
@@ -54,25 +55,19 @@ void MultiCacheSim::createNewCache(){
     #else
     PIN_GetLock(&allCachesLock,1);
     // ------------------debug flag1-----------------
-    fprintf(stdout,"lock\n");
     #endif
 
     SMPCache * newcache ;
     // ------------------debug flag2------------------
 
-    fprintf(stdout,"newcache\n");
     
     newcache = this->cacheFactory(num_caches, &allCaches, cache_size, cache_assoc, cache_bsize, 1, "LRU", false);
-    //newcache = (SMPCache * )
 
-    //newcache = Create(num_caches, &allCaches, cache_size, cache_assoc, cache_bsize, 1, "LRU", false);
-    
     num_caches++;
 
     // ------------------debug flag3------------------
 
     allCaches.push_back(newcache);
-    fprintf(stdout,"pushhh\n");
 
 
     #ifndef PIN
@@ -81,7 +76,6 @@ void MultiCacheSim::createNewCache(){
     PIN_ReleaseLock(&allCachesLock);
     // ------------------debug flag4
 
-    fprintf(stdout,"unlock\n");
     #endif
 }
 
