@@ -15,3 +15,4 @@
    
 7. Now it works : should dynamically link the global symbol, rather than local one.
    how : in source/include/pin/pintool.ver, in "global" tag, add new line "Create"
+   or see the my pintool_file : it has pintool.ver we need

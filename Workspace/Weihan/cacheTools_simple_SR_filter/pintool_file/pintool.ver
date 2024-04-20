@@ -1,0 +1,11 @@
+Base {
+    global:
+        main;
+        ClientIntC;
+        PinCommitHashC;
+	Create;
+	readLine;
+
+    local:
+        *;
+};
