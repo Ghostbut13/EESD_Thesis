@@ -53,34 +53,19 @@ void MSI_SMPCache::fillLine(uint32_t addr, uint32_t msi_state){
 }
 
 
-
-
 //******************************
 // filter design
 void MSI_SMPCache::filterAddr(uint32_t addr, MSI_SMPCache *otherCache){
-
-  
   if(filter_initial_flag[otherCache->getCPUId()] == 1){ // initial
-
   }else{ // second
-
     // filtering
-    if(!(filter_mask[this->getCPUId()] == filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]))){ // addr not matching
-
-      return;
-      
-    }
-    
+    if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]))))
+      { // addr not matching
+	return;
+      }
   }
-  
-
-
 }
-
-
-
-
-
+//******************************
 
 
 
@@ -111,23 +96,16 @@ MSI_SMPCache::RemoteReadService MSI_SMPCache::readRemoteAction(uint32_t addr){ /
 
       }
 
-
-
-      
+      //******************************
       //filter
       if(filter_initial_flag[otherCache->getCPUId()] == 1){ // initial
-
       }else{ // second
-
 	// filtering
-	if(!(filter_mask[otherCache->getCPUId()] == filter_mask[otherCache->getCPUId()] & (filter_base[otherCache->getCPUId()] ^ addr ^ filter_mask[otherCache->getCPUId()]))){ // addr not matching
-
+	if(!(filter_mask[otherCache->getCPUId()] == (filter_mask[otherCache->getCPUId()] & (filter_base[otherCache->getCPUId()] ^ addr ^ filter_mask[otherCache->getCPUId()])))){ // addr not matching
 	  continue;
-      
 	}
-    
       }
-
+      //******************************
 
 
 
@@ -229,14 +207,14 @@ void MSI_SMPCache::readLine(uint32_t rdPC, uint32_t addr){
 
 
 
-    
+    //******************************
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
       filter_mask[this->getCPUId()] = 0x3FF;
       filter_base[this->getCPUId()] = addr;
     }else{
-      if(!(filter_mask[this->getCPUId()] == filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]))){ // addr not matching
+      if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
 
 	// mask updating
 	filter_mask[this->getCPUId()] = filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]);      
@@ -251,7 +229,7 @@ void MSI_SMPCache::readLine(uint32_t rdPC, uint32_t addr){
 	printf("(de)base + mask + cpuID:  %d  %d,  %d\n",filter_base[this->getCPUId()],filter_mask[this->getCPUId()],this->getCPUId());
       }
     }
-
+    //******************************
 
     
     
@@ -328,22 +306,18 @@ MSI_SMPCache::InvalidateReply MSI_SMPCache::writeRemoteAction(uint32_t addr){
       continue;
     }
 
-
+    //******************************
     //filter
     if(filter_initial_flag[otherCache->getCPUId()] == 1){ // initial
-
     }else{ // second
-
       // filtering
-      if(!(filter_mask[otherCache->getCPUId()] == filter_mask[otherCache->getCPUId()] & (filter_base[otherCache->getCPUId()] ^ addr ^ filter_mask[otherCache->getCPUId()]))){ // addr not matching
-
+      if(!(filter_mask[otherCache->getCPUId()] == (filter_mask[otherCache->getCPUId()] & (filter_base[otherCache->getCPUId()] ^ addr ^ filter_mask[otherCache->getCPUId()])))){ // addr not matching
 	continue;
-      
       }
-    
     }
+    //******************************
 
-
+    
     /*Get the line from the current other cache*/
     MSI_SMPCacheState* otherState = 
       (MSI_SMPCacheState *)otherCache->cache->findLine(addr);
@@ -359,9 +333,11 @@ MSI_SMPCache::InvalidateReply MSI_SMPCache::writeRemoteAction(uint32_t addr){
 
     }
 
+    //******************************
     else{
       EmptyLookUp++;
     }
+    //******************************
     
   }// end forloop/*done with other caches*/
 
@@ -418,14 +394,14 @@ void MSI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
 
 
     
-    
+    //******************************
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
       filter_mask[this->getCPUId()] = 0x3FF;
       filter_base[this->getCPUId()] = addr;
     }else{
-      if(!(filter_mask[this->getCPUId()] == filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]))){ // addr not matching
+      if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
 
 	// mask updating
 	filter_mask[this->getCPUId()] = filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]);      
@@ -440,7 +416,7 @@ void MSI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
 	printf("(de)base + mask + cpuID:  %d  %d,  %d\n",filter_base[this->getCPUId()],filter_mask[this->getCPUId()],this->getCPUId());
       }
     }
-    
+    //******************************
 
 
     
@@ -449,7 +425,7 @@ void MSI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
      * state accordingly.  This action is effectively putting the write
      * on the bus.
      */ 
-    MSI_SMPCache::InvalidateReply inv_ack = writeRemoteAction(addr);
+    //MSI_SMPCache::InvalidateReply inv_ack = writeRemoteAction(addr);
     numInvalidatesSent++;
 
     /*Fill the line with the new written block*/
@@ -468,14 +444,14 @@ void MSI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
     numWriteOnSharedMisses++;
 
     
-    
+    //******************************
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
       filter_mask[this->getCPUId()] = 0xFF;
       filter_base[this->getCPUId()] = addr;
     }else{
-      if(!(filter_mask[this->getCPUId()] == filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]))){ // addr not matching
+      if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
 
 	// mask updating
 	filter_mask[this->getCPUId()] = filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]);      
@@ -490,11 +466,11 @@ void MSI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
 	printf("(de)base + mask + cpuID:  %d  %d,  %d\n",filter_base[this->getCPUId()],filter_mask[this->getCPUId()],this->getCPUId());
       }
     }
-
+    //******************************
 
     
     /*Let the other sharers snoop this write, and invalidate themselves*/
-    MSI_SMPCache::InvalidateReply inv_ack = writeRemoteAction(addr);
+    //MSI_SMPCache::InvalidateReply inv_ack = writeRemoteAction(addr);
     numInvalidatesSent++;
 
     /*Change the state of the line to Modified to reflect the write*/
