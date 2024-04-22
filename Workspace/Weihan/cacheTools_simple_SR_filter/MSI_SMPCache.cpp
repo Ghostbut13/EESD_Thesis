@@ -255,15 +255,15 @@ void MSI_SMPCache::readLine(uint32_t rdPC, uint32_t addr){
       }
 
       /*Fill the line*/
-      fillLine(addr,MSI_SHARED); //update the state ==> S
+      //fillLine(addr,MSI_SHARED); //update the state ==> S
     }
-    else{ // the data from the memory
-      fillLine(addr,MSI_INVALID); //update the state ==> I
-    }
+    //else{ // the data from the memory
+      //fillLine(addr,MSI_INVALID); //update the state ==> I
+    //}
 
     
     // /*Fill the line*/
-    // fillLine(addr,MSI_SHARED); //update the state ==> S
+    fillLine(addr,MSI_SHARED); //update the state ==> S
       
   }else{
 

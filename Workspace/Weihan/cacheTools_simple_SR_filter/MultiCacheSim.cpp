@@ -1,6 +1,8 @@
 #include "MultiCacheSim.h"
 
 //  "MultiCacheSim.h" includes the declaration of function
+//std::ofstream OutFile;
+
 
 MultiCacheSim::MultiCacheSim(FILE *cachestats, int size, int assoc, int bsize, CacheFactory c){
 
@@ -31,19 +33,24 @@ SMPCache *MultiCacheSim::findCacheByCPUId(unsigned int CPUid){
     return NULL;
 } 
 
-void MultiCacheSim::dumpStatsForAllCaches(bool concise){
+void MultiCacheSim::dumpStatsForAllCaches(bool concise, std::ostream& outFile){
    
     std::vector<SMPCache *>::iterator cacheIter = allCaches.begin();
     std::vector<SMPCache *>::iterator cacheEndIter = allCaches.end();
     for(; cacheIter != cacheEndIter; cacheIter++){
       if(!concise){
-        (*cacheIter)->dumpStatsToFile(CacheStats);
+        (*cacheIter)->dumpStatsToFile(outFile);
       }else{
+	
+	//fprintf(CacheStats,"CPUId, numReadHits, numReadMisses, numReadOnInvalidMisses, numReadRequestsSent, numReadMissesServicedByOthers, numReadMissesServicedByShared, numReadMissesServicedByModified, numWriteHits, numWriteMisses, numWriteOnSharedMisses, numWriteOnInvalidMisses, numInvalidatesSent,weihan'shere\n");
+	outFile << "CPUId, numReadHits, numReadMisses, numReadOnInvalidMisses, numReadRequestsSent, numReadMissesServicedByOthers, numReadMissesServicedByShared, numReadMissesServicedByModified, numWriteHits, numWriteMisses, numWriteOnSharedMisses, numWriteOnInvalidMisses, numInvalidatesSent, EmptyLookUp" << std::endl;
 
-	fprintf(CacheStats,"CPUId, numReadHits, numReadMisses, numReadOnInvalidMisses, numReadRequestsSent, numReadMissesServicedByOthers, numReadMissesServicedByShared, numReadMissesServicedByModified, numWriteHits, numWriteMisses, numWriteOnSharedMisses, numWriteOnInvalidMisses, numInvalidatesSent,weihan'shere\n");
+	//// conciseDumpStatsToFile : most impotant. in SMPCache
+	//// So, before enter dumpStatsForAllCaches, the iterator "i" is cores' index. Here, iterator "cacheIter" is global history index
+	/// the class for global is SMPCache; and class of core is MultiCacheSim 
+	
+        (*cacheIter)->conciseDumpStatsToFile(outFile);
 
-    // conciseDumpStatsToFile : most impotant. in SMPCache
-        (*cacheIter)->conciseDumpStatsToFile(CacheStats);
       }
     }
 }

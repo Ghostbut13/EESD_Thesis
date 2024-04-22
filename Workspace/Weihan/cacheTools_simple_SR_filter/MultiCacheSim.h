@@ -1,10 +1,8 @@
 #include "CacheInterface.h"
 #include "SMPCache.h"
 
-#include "MESI_SMPCache.h"
-#include "MSI_SMPCache.h"
+#include "MOESI_SMPCache.h"
 
-//#define PIN
 
 #ifndef PIN
 #include <pthread.h>
@@ -51,7 +49,7 @@ public:
   //These three functions implement the CacheInterface interface 
   void readLine(unsigned long tid, unsigned long rdPC, unsigned long addr);
   void writeLine(unsigned long tid, unsigned long wrPC, unsigned long addr);
-  void dumpStatsForAllCaches(bool concise);
+  void dumpStatsForAllCaches(bool concise, std::ostream& outfile);
 
   //Utility Function to get the cache object that has the specified CPUid
   SMPCache *findCacheByCPUId(unsigned int CPUid);

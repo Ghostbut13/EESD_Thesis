@@ -296,32 +296,7 @@ void MOESI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
     numWriteMisses++;
     numWriteOnSharedMisses++;
 
-    
-    //******************************
-    //filter : updating
-    if(filter_initial_flag[this->getCPUId()] == 1){ // initial
-      filter_initial_flag[this->getCPUId()] = 0;
-      filter_mask[this->getCPUId()] = 0xFF;
-      filter_base[this->getCPUId()] = addr;
-    }else{
-      if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
 
-	// mask updating
-	filter_mask[this->getCPUId()] = filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()]);      
-      }
-      // base updating
-      filter_base[this->getCPUId()] = addr;
-    }
-    
-    if(1){
-      if(filter_mask[this->getCPUId()] != 0){
-	std::cout << "(bin)base + mask + cpuID: "<< std::bitset<16>(filter_base[this->getCPUId()]) << " "<< std::bitset<16>(filter_mask[this->getCPUId()]) << ",   " << this->getCPUId() << std::endl;
-	printf("(de)base + mask + cpuID:  %d  %d,  %d\n",filter_base[this->getCPUId()],filter_mask[this->getCPUId()],this->getCPUId());
-      }
-    }
-    //******************************
-    
-    
     //MOESI_SMPCache::InvalidateReply inv_ack = writeRemoteAction(addr);
     numInvalidatesSent++;
 

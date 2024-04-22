@@ -33,7 +33,7 @@ public:
   int numInvalidatesSent;
 
   	
-  /**************Weihan******************/
+  /**************metric******************/
   int EmptyLookUp;
 
   /********************************/
@@ -56,8 +56,8 @@ public:
   virtual char *Identify() = 0;
 
   //Dump the stats for this cache to outFile
-  virtual void dumpStatsToFile(FILE* outFile);
-  virtual void conciseDumpStatsToFile(FILE* outFile);
+  virtual void dumpStatsToFile(std::ostream& outFile);
+  virtual void conciseDumpStatsToFile(std::ostream& outFile);
   
   int getStateAsInt(unsigned long addr);
 

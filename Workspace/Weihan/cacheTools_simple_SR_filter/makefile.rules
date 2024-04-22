@@ -73,7 +73,7 @@ LIB_ROOTS :=
 
 
 SRCS := SMPCache.cpp MultiCacheSim.cpp CacheCore.cpp Snippets.cpp nanassert.cpp MultiCacheSim_PinDriver.cpp
-FACSRCS := MSI_SMPCache.cpp MESI_SMPCache.cpp
+FACSRCS := MOESI_SMPCache.cpp
 
 OBJS := $(SRCS:$(OBJDIR)/%.cpp=$(OBJDIR)%.$(OBJ_SUFFIX))
 FACOBJS := $(FACSRCS:%.cpp=%.so)
@@ -110,7 +110,7 @@ $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX) : MultiCacheSim_PinDriver.cpp
 
 
 
-#####################################  MOESI
+#####################################  MOESI with filter
 $(OBJDIR)MOESI_SMPCache$(OBJ_SUFFIX) : MOESI_SMPCache.cpp
 	$(CXX) $(TOOL_CXXFLAGS_NOOPT)  -g $(COMP_OBJ)$@ $< 
 
@@ -118,15 +118,13 @@ $(OBJDIR)MOESI_SMPCache$(PINTOOL_SUFFIX) : $(OBJDIR)MOESI_SMPCache$(OBJ_SUFFIX) 
 	$(LINKER) $(TOOL_LDFLAGS_NOOPT) -fPIC -shared  $(OBJDIR)MOESI_SMPCache$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(LINK_EXE)$@  $(TOOL_LPATHS) $(TOOL_LIBS) 
 
 
-
-
-##################################### no filter in MESI
+###################################  MESI without filter
 $(OBJDIR)MESI_SMPCache$(OBJ_SUFFIX) : MESI_SMPCache.cpp
 	$(CXX) $(TOOL_CXXFLAGS_NOOPT)  -g $(COMP_OBJ)$@ $< 
-#	$(CXX) $(TOOL_CXXFLAGS)  -g $(COMP_OBJ)$@ $< 
 
 $(OBJDIR)MESI_SMPCache$(PINTOOL_SUFFIX) : $(OBJDIR)MESI_SMPCache$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX)
 	$(LINKER) $(TOOL_LDFLAGS_NOOPT) -fPIC -shared  $(OBJDIR)MESI_SMPCache$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(LINK_EXE)$@  $(TOOL_LPATHS) $(TOOL_LIBS) 
+
 
 
 ###################################  MSI with filter
@@ -137,15 +135,10 @@ $(OBJDIR)MSI_SMPCache$(PINTOOL_SUFFIX) : $(OBJDIR)MSI_SMPCache$(OBJ_SUFFIX) $(OB
 	$(LINKER) $(TOOL_LDFLAGS_NOOPT) -fPIC -shared  $(OBJDIR)MSI_SMPCache$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(LINK_EXE)$@  $(TOOL_LPATHS) $(TOOL_LIBS) 
 
 
-
 ################################# main simulation : mcs 
 $(OBJDIR)mcs$(PINTOOL_SUFFIX) : $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX)  $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)
 	$(LINKER) $(TOOL_LDFLAGS_NOOPT)  -fPIC -shared $(OBJDIR)MultiCacheSim_PinDriver$(OBJ_SUFFIX)  $(OBJDIR)MultiCacheSim$(OBJ_SUFFIX) $(OBJDIR)SMPCache$(OBJ_SUFFIX)  $(OBJDIR)CacheCore$(OBJ_SUFFIX) $(OBJDIR)Snippets$(OBJ_SUFFIX) $(OBJDIR)nanassert$(OBJ_SUFFIX) $(LINK_EXE) $@ $(TOOL_LPATHS) $(TOOL_LIBS) -rdynamic
 
-
-
-
-#-o $(OBJDIR)mcs$(PINTOOL_SUFFIX) $(TOOL_LPATHS) $(TOOL_LIBS)
 
 
 

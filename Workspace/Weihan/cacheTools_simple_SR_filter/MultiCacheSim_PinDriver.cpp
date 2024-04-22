@@ -6,10 +6,7 @@
 #include <fstream>
 #include <string>
 #include <string.h>
-//#include "/home/weihan/Workplace/masterThesis/pintool/pin-3.30-gcc-linux/extras/crt/include/dlfcn.h"
 #include <dlfcn.h>
-
-
 #include "MultiCacheSim.h"
 
 
@@ -18,7 +15,10 @@ using std::cerr;
 using std::string;
 using std::endl;
 using std::cout;
+using std::ofstream;
+using std::ios;
 
+ofstream OutFile;
 
 std::vector<MultiCacheSim *> Caches;
 MultiCacheSim *ReferenceProtocol;
@@ -57,6 +57,9 @@ KNOB<string> KnobProtocol(KNOB_MODE_WRITEONCE, "pintool",
 
 KNOB<string> KnobReference(KNOB_MODE_WRITEONCE, "pintool",
 			   "reference", "obj-intel64/MESI_SMPCache.so", "Reference Protocol that is compared to test Protocols for Correctness");
+
+KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
+			     "o", "MultiCachesim.log","Specify output file name");
 
 
 #define MAX_NTHREADS 64
@@ -220,15 +223,18 @@ VOID dumpInfo(){
 
 VOID Fini(INT32 code, VOID *v)
 {
-  //cout << "dadadadadaf" << endl;
+  OutFile.setf(ios::out);
+
   
   std::vector<MultiCacheSim *>::iterator i,e;
   for(i = Caches.begin(), e = Caches.end(); i != e; i++){
     PIN_GetLock(&globalLock,1);
-    (*i)->dumpStatsForAllCaches(KnobConcise.Value());
+    //// i is index of cores 
+    (*i)->dumpStatsForAllCaches(KnobConcise.Value(),OutFile);
     PIN_ReleaseLock(&globalLock);
   }
-  
+
+  OutFile.close();
 }
 
 BOOL segvHandler(THREADID threadid,INT32 sig,CONTEXT *ctx,BOOL hasHndlr,const EXCEPTION_INFO *pExceptInfo, VOID*v){
@@ -251,9 +257,8 @@ int main(int argc, char *argv[])
   
   PIN_InitLock(&globalLock);  
 
-  //FILE *fp =NULL;
-
-  //fp=fopen("hello.log","w+");
+  OutFile.open(KnobOutputFile.Value().c_str());
+  //  char *name_file_out = KnobOutputFile.Value().c_str();
   
   cout << "======================start===================" << endl;
   
@@ -351,7 +356,6 @@ int main(int argc, char *argv[])
     
   fprintf(stderr,"Using Protocol %s\n",KnobReference.Value().c_str());
 
-  //fclose(fp);
   PIN_StartProgram();
   
   return 0;
