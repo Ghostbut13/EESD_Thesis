@@ -5,7 +5,7 @@
 
 //bad coding style. but now, it is easy for me.
 bool     filter_initial_flag[4] = {1,1,1,1};
-uint16_t filter_base[4]         = {0x3ff,0x3ff,0x3ff,0x3ff}; //10bit
+uint16_t filter_base[4]         = {0xffff,0xffff,0xffff,0xffff}; //10bit
 uint16_t filter_mask[4]         = {0x000,0x000,0x000,0x000}; //10bit
 
 
@@ -106,10 +106,6 @@ MSI_SMPCache::RemoteReadService MSI_SMPCache::readRemoteAction(uint32_t addr){ /
 	}
       }
       //******************************
-
-
-
-
       
 
       /*Get the state of the block this addr maps to in the other cache*/      
@@ -204,14 +200,11 @@ void MSI_SMPCache::readLine(uint32_t rdPC, uint32_t addr){
 
 
 
-
-
-
     //******************************
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
-      filter_mask[this->getCPUId()] = 0x3FF;
+      filter_mask[this->getCPUId()] = 0xFFFF;//3FF
       filter_base[this->getCPUId()] = addr;
     }else{
       if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
@@ -398,7 +391,7 @@ void MSI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
-      filter_mask[this->getCPUId()] = 0x3FF;
+      filter_mask[this->getCPUId()] = 0xFFFF;//3FF
       filter_base[this->getCPUId()] = addr;
     }else{
       if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
@@ -448,7 +441,7 @@ void MSI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
-      filter_mask[this->getCPUId()] = 0xFF;
+      filter_mask[this->getCPUId()] = 0xFFFF;//3FF
       filter_base[this->getCPUId()] = addr;
     }else{
       if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
