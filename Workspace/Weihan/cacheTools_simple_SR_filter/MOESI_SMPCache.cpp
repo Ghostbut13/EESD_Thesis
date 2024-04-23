@@ -125,7 +125,7 @@ void MOESI_SMPCache::readLine(uint32_t rdPC, uint32_t addr){
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
-      filter_mask[this->getCPUId()] = 0x3FF;
+      filter_mask[this->getCPUId()] = 0xFFFF;//3ff
       filter_base[this->getCPUId()] = addr;
     }else{
       if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
@@ -259,7 +259,7 @@ void MOESI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
     //filter : updating
     if(filter_initial_flag[this->getCPUId()] == 1){ // initial
       filter_initial_flag[this->getCPUId()] = 0;
-      filter_mask[this->getCPUId()] = 0x3FF;
+      filter_mask[this->getCPUId()] = 0xFFFF;//3ff
       filter_base[this->getCPUId()] = addr;
     }else{
       if(!(filter_mask[this->getCPUId()] == (filter_mask[this->getCPUId()] & (filter_base[this->getCPUId()] ^ addr ^ filter_mask[this->getCPUId()])))){ // addr not matching
