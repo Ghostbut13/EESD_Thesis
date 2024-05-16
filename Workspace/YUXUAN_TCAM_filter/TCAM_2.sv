@@ -78,7 +78,13 @@ module TCAM
                                     end
                                     else if (opcode==WRITE_BACK_FULL)begin
                                         present_bit[i][0]=1'b0;
-                                        flag=4'b0000;
+                                        if(present_bit[i]==4'b0000) begin
+                                            cache_tags[i]=33'b0;
+                                            flag=4'b0000;
+                                        end
+                                        else begin
+                                            flag=4'b0000;
+                                        end
                                     end
                                     else begin
                                         flag=4'b0000;
@@ -118,7 +124,13 @@ module TCAM
                                     end
                                     else if (opcode==WRITE_BACK_FULL) begin
                                         present_bit[i][1]=1'b0;
-                                        flag=4'b0000;
+                                        if(present_bit[i]==4'b0000) begin
+                                            cache_tags[i]=33'b0;
+                                            flag=4'b0000;
+                                        end
+                                        else begin
+                                            flag=4'b0000;
+                                        end
                                     end
                                     else begin
                                         flag=4'b0000;
@@ -158,7 +170,13 @@ module TCAM
                                     end
                                     else if (opcode==WRITE_BACK_FULL) begin
                                         present_bit[i][2]=1'b0;
-                                        flag=4'b0000;
+                                        if(present_bit[i]==4'b0000) begin
+                                            cache_tags[i]=33'b0;
+                                            flag=4'b0000;
+                                        end
+                                        else begin
+                                            flag=4'b0000;
+                                        end
                                     end
                                     else begin
                                         flag=4'b0000;
@@ -198,7 +216,13 @@ module TCAM
                                     end
                                     else if (opcode==WRITE_BACK_FULL) begin
                                         present_bit[i][3]=1'b0;
-                                        flag=4'b0000;
+                                        if(present_bit[i]==4'b0000) begin
+                                            cache_tags[i]=33'b0;
+                                            flag=4'b0000;
+                                        end
+                                        else begin
+                                            flag=4'b0000;
+                                        end
                                     end
                                     else begin
                                         flag=4'b0000;
@@ -209,51 +233,61 @@ module TCAM
                         flag=flag; 
                     end
             end 
-            if(tag_match==1'b0)begin//
-                //replace_match=1'b0;
-                for(int k;k<Y;k++)begin
-                    if (present_bit[k]==4'b0000)begin
-                        if(replace_match==1'b0)begin
-                            cache_tags[k]=tag;
-                            replace_match=1'b1;
-                            case (NID)
-                                RN1:present_bit[k]=4'b0001;
-                                RN2:present_bit[k]=4'b0010;
-                                RN3:present_bit[k]=4'b0100;
-                                RN4:present_bit[k]=4'b1000;
-                                default:present_bit[k]=4'b0000; 
-                            endcase
-                            case (NID)
-                                RN1:flag=4'b1110;
-                                RN2:flag=4'b1101;
-                                RN3:flag=4'b1011;
-                                RN4:flag=4'b0111;
-                                default:flag=4'b0000;
-                            endcase
-                        end
-                        else begin
-                            flag=flag;
-                        end
-                    end
-                    else begin
-                        replace_match=1'b0;
-                    end
-                end
-                if (replace_match==1'b0)begin//LRU
-                    cache_tags[counter]=tag;
-                    counter=counter+1;
-                    case (NID)
-                        RN1:flag=4'b1110;
-                        RN2:flag=4'b1101;
-                        RN3:flag=4'b1011;
-                        RN4:flag=4'b0111;
-                        default:flag=4'b0000;
-                    endcase
-                    
+            if(tag_match==1'b0)begin//devide opcode
+                if(opcode==WRITE_BACK_FULL)begin
+                    flag=4'b0000;
                 end
                 else begin
-                    counter=counter;
-                    flag=flag;
+                    for(int k;k<Y;k++)begin
+                        if (present_bit[k]==4'b0000)begin
+                            if(replace_match==1'b0)begin
+                                cache_tags[k]=tag;
+                                replace_match=1'b1;
+                                case (NID)
+                                    RN1:present_bit[k]=4'b0001;
+                                    RN2:present_bit[k]=4'b0010;
+                                    RN3:present_bit[k]=4'b0100;
+                                    RN4:present_bit[k]=4'b1000;
+                                    default:present_bit[k]=4'b0000; 
+                                endcase
+                                case (NID)
+                                    RN1:flag=4'b1110;
+                                    RN2:flag=4'b1101;
+                                    RN3:flag=4'b1011;
+                                    RN4:flag=4'b0111;
+                                    default:flag=4'b0000;
+                                endcase
+                            end
+                            else begin
+                                flag=flag;
+                            end
+                        end
+                        else begin
+                            replace_match=1'b0;
+                        end
+                    end
+                    if (replace_match==1'b0)begin//LRU
+                        cache_tags[counter]=tag;
+                        case (NID)
+                            RN1:present_bit[counter]=4'b0001;
+                            RN2:present_bit[counter]=4'b0010;
+                            RN3:present_bit[counter]=4'b0100;
+                            RN4:present_bit[counter]=4'b1000;
+                            default:present_bit[counter]=4'b0000; 
+                        endcase
+                        case (NID)
+                            RN1:flag=4'b1110;
+                            RN2:flag=4'b1101;
+                            RN3:flag=4'b1011;
+                            RN4:flag=4'b0111;
+                            default:flag=4'b0000;
+                        endcase
+                        counter=counter+1;
+                    end
+                    else begin
+                        counter=counter;
+                        flag=flag;
+                    end
                 end
             end
             else begin
@@ -261,7 +295,6 @@ module TCAM
             end
         end
     end
-    //end
 endmodule
 
 
