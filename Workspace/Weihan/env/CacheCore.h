@@ -30,7 +30,7 @@ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include "nanassert.h"
 #include "Snippets.h"
 //#include "GStats.h" //NEED TO GET RID OF THIS SOMEHOW
-#define CBLKSZ 32
+#define CBLKSZ 64
 #define CASSOC 8
 #define CSIZE 32767
 #define CREPLPOLICY "RANDOM" 

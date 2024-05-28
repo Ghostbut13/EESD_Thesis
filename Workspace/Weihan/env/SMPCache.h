@@ -2,7 +2,7 @@
 #define __SMPCACHE_H_
 #include "CacheCore.h"
 #include <vector>
-
+#include <ostream>
 
 class SMPCache{
 

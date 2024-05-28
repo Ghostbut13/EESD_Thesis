@@ -104,7 +104,10 @@ void MultiCacheSim::readLine(unsigned long tid, unsigned long rdPC, unsigned lon
     PIN_GetLock(&allCachesLock,1); 
     #endif
 
-
+    #ifdef debug
+    fprintf(stderr,"readLine in core : %ld ,at addr : %ld \n", tid,addr);
+    #endif
+    
     SMPCache * cacheToRead = findCacheByCPUId(tidToCPUId(tid));
     if(!cacheToRead){
       return;
@@ -134,12 +137,16 @@ void MultiCacheSim::writeLine(unsigned long tid, unsigned long wrPC, unsigned lo
     PIN_GetLock(&allCachesLock,1); 
     #endif
 
-
+    #ifdef debug
+    fprintf(stderr,"writeLine in core : %ld ,at addr : %ld \n", tid,addr);
+    #endif
+    
     SMPCache * cacheToWrite = findCacheByCPUId(tidToCPUId(tid));
     if(!cacheToWrite){
       return;
     }
     cacheToWrite->writeLine(wrPC,addr);
+
 
 
     #ifndef PIN

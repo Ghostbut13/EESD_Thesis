@@ -53,7 +53,7 @@ KNOB<unsigned int> KnobNumCaches(KNOB_MODE_WRITEONCE, "pintool",
 				 "numcaches", "1", "Number of Caches to Simulate");
 
 KNOB<string> KnobProtocol(KNOB_MODE_WRITEONCE, "pintool",
-			  "protos", "obj-intel64/MSI_SMPCache.so", "Cache Coherence Protocol Modules To Simulate");
+			  "protos", "obj-intel64/MOESI_SMPCache.so", "Cache Coherence Protocol Modules To Simulate");
 
 KNOB<string> KnobReference(KNOB_MODE_WRITEONCE, "pintool",
 			   "reference", "obj-intel64/MESI_SMPCache.so", "Reference Protocol that is compared to test Protocols for Correctness");
@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
   PIN_AddThreadFiniFunction(threadEnd, 0);
   PIN_AddFiniFunction(Fini, 0);
     
-  fprintf(stderr,"Using Protocol %s\n",KnobReference.Value().c_str());
+  fprintf(stderr,"Using Protocol %s\n",KnobProtocol.Value().c_str());
 
   PIN_StartProgram();
   

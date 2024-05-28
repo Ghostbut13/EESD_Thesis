@@ -65,11 +65,16 @@ int main(int argc, char *argv[]){
 
   pthread_mutex_init(&lock,NULL);
 
+  
   pthread_t acc[4],upd;
-  pthread_create(&acc[0],NULL,accessorThread,(void*)shrdPtr);
+
+  //showing the result = shrdPtr-> a+
+  pthread_create(&acc[0],NULL,accessorThread,(void*)shrdPtr);// calling the accessorThread, argument is shrdPtr;
   pthread_create(&acc[1],NULL,accessorThread,(void*)shrdPtr);
   pthread_create(&acc[2],NULL,accessorThread,(void*)shrdPtr);
   pthread_create(&acc[3],NULL,accessorThread,(void*)shrdPtr);
+
+  //update
   pthread_create(&upd,NULL,updaterThread,(void*)shrdPtr);
 
   pthread_join(upd,NULL);
