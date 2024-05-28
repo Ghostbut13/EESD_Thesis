@@ -2,9 +2,11 @@
 #include <iostream>                                                 
 #include <bitset>  
 
+//SR
 #ifndef NUM_SR
 #define NUM_SR 4
 #endif
+
 //bad coding style. but now, it is easy for me.
 bool filter_initial_flag[4][4] =
   {1,1,1,1,
@@ -197,8 +199,7 @@ void MOESI_SMPCache::readLine(uint32_t rdPC, uint32_t addr){
     filter_mask[this->getCPUId()][i_update] = filter_mask[this->getCPUId()][i_update] & (filter_base[this->getCPUId()][i_update] ^ addr ^ filter_mask[this->getCPUId()][i_update]);
     filter_ctr[this->getCPUId()][i_update] = filter_ctr[this->getCPUId()][i_update] +1;// counter	
     filter_base[this->getCPUId()][i_update] = addr;    
-
-    
+ 
     // if(1){
     //   for(int i=0; i<NUM_SR ; i++){
     // 	if(filter_mask[this->getCPUId()][i] != 0){
@@ -406,6 +407,8 @@ void MOESI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
 
     
     //MOESI_SMPCache::InvalidateReply inv_ack = writeRemoteAction(addr);
+    writeRemoteAction(addr);
+    
     numInvalidatesSent++;
 
     //Fill the line with the new write
@@ -422,6 +425,8 @@ void MOESI_SMPCache::writeLine(uint32_t wrPC, uint32_t addr){
 
 
     //MOESI_SMPCache::InvalidateReply inv_ack = writeRemoteAction(addr);
+    writeRemoteAction(addr);
+    
     numInvalidatesSent++;
 
     st->changeStateTo(MOESI_MODIFIED);

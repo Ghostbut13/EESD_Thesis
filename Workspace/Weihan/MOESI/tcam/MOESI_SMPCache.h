@@ -67,8 +67,12 @@ public:
 
 
   //***************************
-  virtual void filterAddr(uint32_t addr,MOESI_SMPCache *otherCache);//
-  
+  virtual void filterFilter(uint32_t addr,MOESI_SMPCache *otherCache);
+  virtual void filterUpdate_Load(uint32_t addr, bool WB);
+
+  virtual void filterUpdate_Store(uint32_t addr, bool WB);
+
+  virtual void checkMOESI(uint32_t addr);
 };
 
 

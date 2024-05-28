@@ -33,7 +33,7 @@ enum MOESIState_t {
   MOESI_SHARED            = 0x00000010,
   MOESI_INVALID           = 0x00000100,
   MOESI_EXCLUSIVE         = 0x00001000,
-  MOESI_OWNED            = 0x00010000
+  MOESI_OWNED             = 0x00010000
 };
 
 class MOESI_SMPCacheState : public StateGeneric<> {
@@ -72,7 +72,7 @@ public:
 
   void changeStateTo(MOESIState_t newstate) {
     // not supposed to invalidate through this interface
-    I(newstate != (unsigned)MOESI_INVALID);
+    //I(newstate != (unsigned)MOESI_INVALID);
     state = (unsigned)newstate;
   }
 
